@@ -87,15 +87,19 @@
   <hr>
   </hr>
   <button id="openCmddanCheckNodeBtn">Buka CMD dan Check Versi Node Js di CMD</button>
-  <p id="hasilVersi2"></p>
+  <p id="openCmddanCheckNode"></p>
   <script>
-    document
-      .getElementById("openCmddanCheckNodeBtn")
-      .addEventListener("click", async () => {
-        const versi = await window.electronAPI.openCmddanCheckNode();
-        document.getElementById("hasilVersi2").textContent =
-          "Versi Node.js: " + versi;
-      });
+    const openCmddanCheckNodeBtn = document.getElementById('openCmddanCheckNodeBtn');
+    const openCmddanCheckNode = document.getElementById('openCmddanCheckNode');
+
+    openCmddanCheckNodeBtn.addEventListener('click', () => {
+      openCmddanCheckNode.textContent = 'Versi kode ini belum dibuat. Akan dipelajari pada materi selanjutnya Insyaa Allah.';
+      window.electronAPI.runOpenCmddanCheckNode(); // Memanggil main process
+    });
+
+    window.electronAPI.onOpenCmddanCheckNodeStatus((event, status) => {
+      openCmddanCheckNode.textContent = status;
+    });
   </script>
 </body>
 

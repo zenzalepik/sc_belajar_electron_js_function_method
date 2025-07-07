@@ -76,75 +76,52 @@ ipcMain.on("install-package", (event) => {
 // 🛠️ Tambahan: Handler check-and-install
 ipcMain.on("check-and-install", (event) => {
   const webContents = event.sender;
-  webContents.send("check-and-install-status", "Sedang mengececk versi Node.js...");
+  webContents.send(
+    "check-and-install-status",
+    "Sedang mengececk versi Node.js..."
+  );
 
-  exec(
-    "node -v",
-    { cwd: path.resolve(__dirname) },
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(stderr);
-        return webContents.send(
-          "check-and-install-status",
-          "Gagal mengececk versi Node.js"
-        );
-      }
-      console.log("✅" + stdout);
-      webContents.send(
+  exec("node -v", { cwd: path.resolve(__dirname) }, (error, stdout, stderr) => {
+    if (error) {
+      console.error(stderr);
+      return webContents.send(
         "check-and-install-status",
-        "✅ Berhasil mengececk versi Node.js"
+        "Gagal mengececk versi Node.js"
       );
+    }
+    console.log("✅" + stdout);
+    webContents.send(
+      "check-and-install-status",
+      "✅ Berhasil mengececk versi Node.js"
+    );
 
-      setTimeout(() => {
-        exec(
-          "npm install",
-          { cwd: path.resolve(__dirname) },
-          (error, stdout, stderr) => {
-            if (error) {
-              console.error(stderr);
-              return webContents.send(
-                "check-and-install-status",
-                "Gagal menginstall paket."
-              );
-            }
-            console.log("✅" + stdout);
-            webContents.send(
+    setTimeout(() => {
+      exec(
+        "npm install",
+        { cwd: path.resolve(__dirname) },
+        (error, stdout, stderr) => {
+          if (error) {
+            console.error(stderr);
+            return webContents.send(
               "check-and-install-status",
-              "✅ Berhasil mengececk dan menginstall paket."
+              "Gagal menginstall paket."
             );
           }
-        );
-      }, 1000);
-    }
-  );
+          console.log("✅" + stdout);
+          webContents.send(
+            "check-and-install-status",
+            "✅ Berhasil mengececk dan menginstall paket."
+          );
+        }
+      );
+    }, 1000);
+  });
 });
 
 // 🛠️ Tambahan: Handler open-cmd-dan-check-node
 ipcMain.handle("open-cmd-dan-check-node", () => {
   console.log("📥 IPC: open-cmd-dan-check-node");
-
-  // Menjalankan CMD dan langsung keluar dari handler, tanpa promise
-  exec("start cmd.exe /k node -v", { windowsHide: false }, (error) => {
-    if (error) {
-      console.error("❌ Gagal buka CMD:", error);
-    } else {
-      console.log("✅ CMD berhasil dibuka dan menjalankan node -v");
-    }
-  });
-
-  // Ambil versi node (output saja, untuk dikirim ke renderer)
-  return new Promise((resolve, reject) => {
-    exec("node -v", { windowsHide: true }, (error, stdout) => {
-      if (error) {
-        console.error("❌ Gagal ambil versi node:", error);
-        reject("Gagal ambil versi");
-      } else {
-        const versi = stdout.trim();
-        console.log("✅ Versi Node:", versi);
-        resolve(versi);
-      }
-    });
-  });
+  return;
 });
 
 // Tambahkan ini hanya saat development
